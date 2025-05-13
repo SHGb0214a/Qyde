@@ -7,23 +7,23 @@ import java.util.Map;
 
 public class Scanner {
     private final String codigo;
-    private final List<Token> tokens = new ArrayList<>();
-    private int inicio = 0;
-    private int actual = 0;
-    private int linea = 1;
-    Scanner(String codigo){
+    private final List<Token> tokens = new ArrayList<>(); //pa almacenar los tokens
+    private int inicio = 0; //inicio del lexema
+    private int actual = 0; //posicion actual en el codigo
+    private int linea = 1; //numero de linea actual
+    Scanner(String codigo){ //constructor
         this.codigo = codigo;
     }
     
     List<Token> scanTokens(){
-        while(!isAtEnd()){
-            inicio = actual;
-            scanToken();
+        while(!isAtEnd()){ //mientras q no sea el final del codigo
+            inicio = actual; 
+            scanToken(); //llamar scantoken
         }
-        tokens.add(new Token(TokenType.EOF, "", null, linea));
-        return tokens;
+        tokens.add(new Token(TokenType.EOF, "", null, linea)); //si se acaba EOF (END OF FILE)
+        return tokens; //retornqr
     }
-    private void scanToken(){
+    private void scanToken(){ //examina el caracter actual y deerminar 
         char c = advance();
         switch(c){
             //tokens de un caracter
@@ -108,29 +108,33 @@ public class Scanner {
     }
     
     private void identificador(){
-        while(isAlphaNumeric(peek())) advance();
-        String text = codigo.substring(inicio, actual);
-        TokenType type = keywords.get(text);
-        if (type == null) type = TokenType.IDENTIFICADOR;
+        while(isAlphaNumeric(peek())) advance(); //se mantiene hasta que ya no sea alfanumerico
+        //peek devuelve el caracter actual sin avanzar el actual
+        //si es alfanumerico, el actual avanza (advance)
+        String text = codigo.substring(inicio, actual); //subcadena con el identificador
+        TokenType type = keywords.get(text); //checar si es una keyword
+        if (type == null) type = TokenType.IDENTIFICADOR; //si no es keywotd, es identificador
         addToken(type);
     }
     
       private boolean isAlpha(char c) {
         return (c >= 'a' && c <= 'z') ||
                (c >= 'A' && c <= 'Z') ||
-                c == '_';
+                c == '_'; //los identificadores no pueden comensar con un digito
+                //pero si contenerlos
       }
 
-      private boolean isAlphaNumeric(char c) {
+      private boolean isAlphaNumeric(char c) { 
         return isAlpha(c) || isDigit(c);
+        //identificadores con letras, numeros pero no otros
       }
 
     private void number(){
-        while(isDigit(peek())) advance();
+        while(isDigit(peek())) advance(); //mientras peek sea un digito, avanza
         //buscar una parte
-        if(peek() == '.' && isDigit(peekNext())){
-            //consume the "."
-            advance();
+        if(peek() == '.' && isDigit(peekNext())){ //verifica si es un punto 
+            //si el sig peeknext es un digito
+            advance(); //consumir el punto decimal
             while(isDigit(peek())) advance();
         }
         addToken(TokenType.NUMERO, Double.parseDouble(codigo.substring(inicio, actual)));
@@ -144,12 +148,12 @@ public class Scanner {
         return true;
     }
     
-    private char peek(){
-        if(isAtEnd()) return '\0';
+    private char peek(){ //retorna el caracter actual sin avanzar
+        if(isAtEnd()) return '\0'; //si es el final del codigo
         return codigo.charAt(actual);
     }
     
-    private char peekNext(){
+    private char peekNext(){ //retorna el siguiente caracter
         if(actual + 1 >= codigo.length()) return '\0';
         return codigo.charAt(actual + 1);
     }
@@ -160,7 +164,8 @@ public class Scanner {
         return actual >= codigo.length();
     }
     
-    private void string(){
+    private void string(){ //reconoce cadenas delimitadas por comillas
+        //avanza caracteres hasta encontrar el cierre de la cadena
         while (peek() != '"' && !isAtEnd()){
            if (peek() == '\n') linea++;
             advance();
@@ -168,18 +173,16 @@ public class Scanner {
         if (isAtEnd()) {
             Qydee.error(linea, "Cadena no valida.");
             return;
-        }
+        } //si no hay cieere, devuelve error
             //se pasan los caracteres hasta que se llegue al " que finaliza la cadena
-          // The closing ".
           advance();
-
-          // Trim the surrounding quotes.
           String valor = codigo.substring(inicio + 1, actual - 1);
           addToken(TokenType.CADENA, valor);
     }
     //consume el siugiente caracter en el archivo y lo retorna
     //para entrada
-    private char advance(){
+    private char advance(){ //avanza actual++  y retorna el caracter en la 
+        //posicion anterior
         return codigo.charAt(actual++);
     }
     

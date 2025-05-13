@@ -14,6 +14,6 @@ public class Token {
     }
     
     public String toString(){
-        return tipo + " " + lexema + " // Numero de linea " + linea;
+        return tipo + " \"" + lexema + "\"// Numero de linea " + linea;
     }
 }
