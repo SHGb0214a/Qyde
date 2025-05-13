@@ -1,0 +1,20 @@
+Qyde
+    print("Bienvenido al lenguaje de programación Qyde")
+    nombre := input("Ingresa tu nombre: ")
+    edad : int = input("Ingresa tu edad: ")
+    
+    match edad
+        >= 18 ->print("eres mayor de edad")
+        < 18 -> print ("Eres menor de edad")
+    end
+    
+    n1 := input("Ingresa un número: ")
+    n2 := input ("Ingresa un segundo número")
+    print("La suma de los dos números es: " + suma(n1, n2))
+
+        suma : int = (a,b) ->
+            return a + b;
+
+falta
+-for
+-while
